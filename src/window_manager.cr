@@ -5,13 +5,18 @@ module Crf
   class WindowManager
     def initialize
       @wnds = [] of Window
+      @parent = uninitialized Window 
       @modal = uninitialized Window
       @status = uninitialized Window
-      @cursor = 1
+      @cursor = 0
     end
 
     def add(wnd)
       @wnds << wnd
+    end
+
+    def add_parent(wnd)
+      @parent = wnd
     end
 
     def add_modal(wnd)
@@ -22,9 +27,13 @@ module Crf
       @status = wnd
     end
 
+    def parent
+      @parent
+    end
+
     def update
       echo_status @cursor.to_s
-      (1...@wnds.size).each do |n|
+      (0...@wnds.size).each do |n|
         next if n == @cursor
         @wnds[n].update_unforcus
       end
@@ -33,7 +42,7 @@ module Crf
 
     def forcus_next
       if @cursor == @wnds.size - 1
-        @cursor = 1 
+        @cursor = 0
       else
         @cursor += 1
       end
@@ -41,7 +50,7 @@ module Crf
     end
 
     def forcus_prev
-      if @cursor == 1
+      if @cursor == 0
         @cursor = @wnds.size - 1
       else
         @cursor -= 1

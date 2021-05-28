@@ -1,5 +1,6 @@
 require "ncurses"
-require "./window"
+require "./dir_window"
+require "./file_window"
 require "./window_manager"
 
 module Crf
@@ -12,20 +13,19 @@ module Crf
       @mng = WindowManager.new
     end
 
-    def main
+    def start
       NCurses.start
       NCurses.cbreak
       NCurses.no_echo
+    end
 
-      parent = Window.new(
-        0,
-        0,
-        1, #NCurses.width,
-        1  #NCurses.height
-      )
-      @mng.add(parent)
+    def create_parent
+      parent = Window.new(0, 0, 1, 1)
+      @mng.add_parent(parent)
+    end
 
-      right = Window.new(
+    def create_right
+      right = FileWindow.new(
         ((NCurses.width - 1) * 0.3).to_i32 - 1,
         0,
         ((NCurses.width - 1) * 0.7).to_i32 + 2,
@@ -33,8 +33,11 @@ module Crf
       )
       right.border = Border::Single
       right.draw_border
+      @mng.add(right)
+    end
 
-      left = Window.new(
+    def create_left
+      left = DirWindow.new(
         0,
         0,
         ((NCurses.width - 1) * 0.3).to_i32,
@@ -42,28 +45,30 @@ module Crf
       )
       left.border = Border::Double
       left.draw_border
+      @mng.add(left)
+    end
 
+    def create_status
       status = Window.new(
         0,
-        NCurses.height - 3,
+        NCurses.height - STATUS_H,
         NCurses.width - 1,
         STATUS_H
       )
       status.border = Border::Single
       status.draw_border
-
-      @mng.add(left)
-      @mng.add(right)
       @mng.add_status(status)
-
-      parent.refresh
       status.refresh
-      right.refresh
-      left.refresh
- 
+    end
+
+    def show_help
+      
+    end
+
+    def main_loop
       begin
         loop do
-          parent.get_char do |ch|
+          @mng.parent.get_char do |ch|
             case ch
             when 'l'
               @mng.forcus_next
@@ -71,6 +76,8 @@ module Crf
             when 'h'
               @mng.forcus_prev
               #@mng.echo_status "h"
+            when '?'
+              show_help
             when 'q'
               raise QuitWindow.new
             end
@@ -79,14 +86,26 @@ module Crf
       rescue QuitWindow
         # exit
       end
-      
+    end
+
+    def terminate
       NCurses.end
     end
 
-    def forcus_next
-
+    def main
+      start
+      create_parent
+      create_left
+      create_right
+      create_status
+      @mng.update
+      main_loop
+      terminate
     end
   end
 end
 
-Crf::Crf.new.main
+
+if File.basename(PROGRAM_NAME) == File.basename(__FILE__, ".cr")
+  Crf::Crf.new.main
+end

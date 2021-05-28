@@ -1,22 +1,28 @@
 # crf
 
-TODO: Write a description here
+TUI Based Filer Written in Crystal.
 
 ## Installation
 
-TODO: Write installation instructions here
+```
+$ git clone https://github.com/kazto/crf
+$ cd crf && crystal build src/crf.cr
+$ cp ./crf /path/to/installdir/
+```
 
 ## Usage
 
-TODO: Write usage instructions here
+```
+  crf OPEN_PATH
+```
 
 ## Development
 
-TODO: Write development instructions here
+All is Under Construction.
 
 ## Contributing
 
-1. Fork it (<https://github.com/your-github-user/crf/fork>)
+1. Fork it (<https://github.com/kazto/crf/fork>)
 2. Create your feature branch (`git checkout -b my-new-feature`)
 3. Commit your changes (`git commit -am 'Add some feature'`)
 4. Push to the branch (`git push origin my-new-feature`)
@@ -24,4 +30,4 @@ TODO: Write development instructions here
 
 ## Contributors
 
-- [your-name-here](https://github.com/your-github-user) - creator and maintainer
+- [kazto](https://github.com/kazto) - creator and maintainer
